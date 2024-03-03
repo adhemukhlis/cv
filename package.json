@@ -1,0 +1,33 @@
+{
+	"name": "adhemukhlis",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "npx env-cmd -x next dev -p '$PORT'",
+		"start": "npx env-cmd -x next start -p '$PORT'",
+		"build": "next build",
+		"lint": "next lint",
+		"prettier-all": "yarn prettier --config .prettierrc --write ./src",
+		"fix": "yarn eslint --fix ./src --ext .ts --ext .tsx --ext .js --ext .jsx",
+		"dependencies-upgrade": "yarn yarn-upgrade-all"
+	},
+	"dependencies": {
+		"axios": "^1.6.5",
+		"dayjs": "^1.11.10",
+		"next": "13.5.6",
+		"pdfmake": "^0.2.9",
+		"react": "^18",
+		"react-dom": "^18"
+	},
+	"devDependencies": {
+		"env-cmd": "^10.1.0",
+		"eslint": "^8.54.0",
+		"eslint-config-next": "^14.0.3",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-react": "^7.33.2",
+		"eslint-plugin-unicorn": "^49.0.0",
+		"eslint-plugin-unused-imports": "^3.0.0",
+		"prettier": "^3.1.0",
+		"yarn-upgrade-all": "^0.7.2"
+	}
+}
