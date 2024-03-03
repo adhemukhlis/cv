@@ -9,7 +9,7 @@ const api = async (req, res) => {
 		case 'GET': {
 			try {
 				const base64_photo_profile = imageBuffer.toString('base64')
-				const filename = `test.pdf`
+				const filename = `CV__MUKHLIS-ADHE-PURWANTO.pdf`
 				const binaryResult = await createPdf({ photo_profile: base64_photo_profile })
 				res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
 				res.setHeader('Content-Type', 'application/pdf')
