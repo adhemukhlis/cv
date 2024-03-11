@@ -15,6 +15,13 @@ const getHumanizeTime = (from_date_iso_string, to_date_iso_string) => {
 	const toDate = !!to_date_iso_string ? dayjs(to_date_iso_string) : dayjs()
 	return dayjs.duration(dayjs(from_date_iso_string).diff(toDate, 'months'), 'months').humanize()
 }
+const availableContactIcon = {
+	whatsapp: whatsappIcon,
+	email: emailIcon,
+	github: githubIcon,
+	linkedin: linkedinIcon
+}
+const availableContactType = Object.keys(availableContactIcon)
 const divider = [
 	{
 		margin: [0, gapSize, 0, 0],
@@ -26,7 +33,20 @@ const divider = [
 		layout: 'headerLineOnly'
 	}
 ]
-const templateDocument = ({ photo_profile }) => ({
+const templateDocument = ({
+	photo_profile,
+	full_name,
+	position,
+	city,
+	province,
+	country,
+	summary,
+	contact,
+	skills,
+	technical_skills,
+	certifications,
+	educations
+}) => ({
 	permissions: {
 		printing: 'highResolution',
 		modifying: false,
@@ -39,12 +59,12 @@ const templateDocument = ({ photo_profile }) => ({
 	pageSize: 'A4',
 	pageMargins: [24, 40, 24, 40],
 	info: {
-		title: 'CV Mukhlis Adhe Purwanto',
-		author: 'Mukhlis Adhe Purwanto',
+		title: `CV ${full_name}`,
+		author: full_name,
 		subject: 'CV',
 		keywords: 'Curriculum Vitae',
-		creator: 'Mukhlis Adhe Purwanto',
-		producer: 'Mukhlis Adhe Purwanto'
+		creator: full_name,
+		producer: full_name
 	},
 	footer: (currentPage, pageCount) => {
 		return [
@@ -79,7 +99,7 @@ const templateDocument = ({ photo_profile }) => ({
 						body: [
 							[
 								{
-									width: 168,
+									width: 92,
 									image: 'data:image/jpeg;base64,' + photo_profile,
 									alignment: 'center'
 								}
@@ -97,54 +117,23 @@ const templateDocument = ({ photo_profile }) => ({
 													svg: locationIcon,
 													fit: [18, 18]
 												},
-												'Bekasi'
+												city
 											],
-											[
-												{
-													svg: whatsappIcon,
-													fit: [18, 18]
-												},
-												{
-													text: '+6285329000180',
-													link: 'https://wa.me/6285329000180'
-												}
-											],
-											[
-												{
-													svg: emailIcon,
-													fit: [18, 18]
-												},
-												{
-													text: 'adhemukhlis@gmail.com'
-														.split(/(.{21})/)
-														.filter((chunk) => chunk.length > 0)
-														.join('\n'),
-													link: 'mailto:adhemukhlis@gmail.com'
-												}
-											],
-											[
-												{
-													svg: githubIcon,
-													fit: [18, 18]
-												},
-												{
-													text: 'adhemukhlis'
-														.split(/(.{21})/)
-														.filter((chunk) => chunk.length > 0)
-														.join('\n'),
-													link: 'https://github.com/adhemukhlis'
-												}
-											],
-											[
-												{
-													svg: linkedinIcon,
-													fit: [18, 18]
-												},
-												{
-													text: 'Mukhlis Adhe Purwanto',
-													link: 'https://www.linkedin.com/in/mukhlis-adhe-purwanto-b06658128'
-												}
-											]
+											...(contact || [])
+												.filter((item) => availableContactType.includes(item?.type))
+												.map((item) => [
+													{
+														svg: availableContactIcon[item?.type],
+														fit: [18, 18]
+													},
+													{
+														text: (item?.label || '')
+															.split(/(.{21})/)
+															.filter((chunk) => chunk.length > 0)
+															.join('\n'),
+														link: item.url
+													}
+												])
 										]
 									}
 								}
@@ -152,19 +141,19 @@ const templateDocument = ({ photo_profile }) => ({
 							[{ text: 'Skills', style: 'titleStyle' }],
 							[
 								{
-									ul: ['Teamwork', 'Problem Solving']
+									ul: skills
 								}
 							],
 							[{ text: 'Technical Skills', style: 'titleStyle' }],
 							[
 								{
-									ul: ['Javascript', 'ReactJS', 'NextJS', 'Git', 'Docker']
+									ul: technical_skills
 								}
 							],
 							[{ text: 'Certifications', style: 'titleStyle' }],
 							[
 								{
-									ul: ['BNSP Junior Web Developer']
+									ul: certifications
 								}
 							]
 						]
@@ -177,14 +166,14 @@ const templateDocument = ({ photo_profile }) => ({
 					table: {
 						widths: ['*'],
 						body: [
-							[{ text: 'Mukhlis Adhe Purwanto', style: 'fullNameStyle' }],
-							[{ text: 'Front End Developer', fontSize: 12, bold: true }],
-							[{ text: 'Bekasi, West Java, Indonesia', fontSize: 10 }],
+							[{ text: full_name, style: 'fullNameStyle' }],
+							[{ text: position, fontSize: 12, bold: true }],
+							[{ text: [city, province, country].join(', '), fontSize: 10 }],
 							divider,
 							[{ text: 'Summary', style: 'titleStyle' }],
 							[
 								{
-									text: 'I create beautiful interfaces that are simple, friendly, and have optimal performance!',
+									text: summary,
 									style: 'contentStyle'
 								}
 							],
@@ -229,22 +218,28 @@ const templateDocument = ({ photo_profile }) => ({
 							],
 							divider,
 							[{ text: 'Education', style: 'titleStyle' }],
-							[
-								{
-									text: 'Bachelor of Computer Science',
-									style: 'titleContentStyle'
-								}
-							],
-							[
-								{
-									text: 'Institut Teknologi Telkom Purwokerto (2016 - 2023)'
-								}
-							],
-							[
-								{
-									ul: ['GPA : 3.46', 'Development Of Cubar Math Educational Games Using The GDLC Method']
-								}
-							]
+							...(educations || []).flatMap(({ study_program, institution, year_of_start, year_of_end, ...other }) => [
+								[
+									{
+										text: study_program || '<study_program>',
+										style: 'titleContentStyle'
+									}
+								],
+								[
+									{
+										text: `${institution || '<institution>'} (${year_of_start || '<year_of_start>'} - ${year_of_end || '<year_of_end>'})`
+									}
+								],
+								...(Object.keys(other).length > 0
+									? [
+											[
+												{
+													ul: [`GPA : ${other?.GPA || '<GPA>'}`, other?.final_project_title || '<final_project_title>']
+												}
+											]
+										]
+									: [])
+							])
 						]
 					}
 				}

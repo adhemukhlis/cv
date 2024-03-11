@@ -2,9 +2,37 @@ import PdfPrinter from 'pdfmake'
 import { Roboto } from './fonts'
 import templateDocument from './TemplateDocuments/templateDocument'
 
-export const createPdf = async ({ photo_profile }) => {
+export const createPdf = async ({
+	photo_profile,
+	full_name,
+	position,
+	city,
+	province,
+	country,
+	summary,
+	contact,
+	skills,
+	technical_skills,
+	certifications,
+	educations
+}) => {
 	const printer = new PdfPrinter({ Roboto })
-	const pdfDoc = printer.createPdfKitDocument(templateDocument({ photo_profile }))
+	const pdfDoc = printer.createPdfKitDocument(
+		templateDocument({
+			photo_profile,
+			full_name,
+			position,
+			city,
+			province,
+			country,
+			summary,
+			contact,
+			skills,
+			technical_skills,
+			certifications,
+			educations
+		})
+	)
 	return new Promise((resolve, reject) => {
 		try {
 			const chunks = []
